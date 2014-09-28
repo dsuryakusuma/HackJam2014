@@ -2,7 +2,7 @@ HackJam2014: Cal HackJam - August 27, 2014
 =============
 
 We created PatentAssist API, which takes in a keyword and returns information on related patents.
-We built this with Python / the Django web framework, and JSON / JS on the web front end. As  
+We built this with Python / the Django web framework, and JSON / JS on the web front end. 
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -18,6 +18,7 @@ Output: list of related patents' (1) patent ID, and (2) patent title/description
 Input: Patent ID (i.e: US613809)
 Output: PDF of the patent application submitted to the USPTO
 
+Front-end (link broken to digital ocean virtual host for the app)
 http://patentassist.me
 
 
