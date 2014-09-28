@@ -1,8 +1,15 @@
 // adapted from http://jsfiddle.net/2nhTD/
+var pat_id;
+var width;
+var height;
+var color;
+var svg;
+
 window.onload = function() {
-    var width = 800, height = 600;
-    var color = d3.scale.category20();
-    var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
+    pat_id = getURLParameter("pat_id");
+    width = 800, height = 600;
+    color = d3.scale.category20();
+    svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
     var graph = {
       "nodes": [
         {"name": "stkbl0001", "group": 1},
@@ -18,7 +25,9 @@ window.onload = function() {
         {"source": "stkbl0004", "target": "stkbl0005", "value": 3}
       ]};
 
-    $.ajax("/ajax/graph/?pat_id=" + encodeURIComponent(getURLParameter("pat_id")), complete=showGraph);
+    $.ajax({
+        url: "/ajax/graph/?pat_id=" + encodeURIComponent(pat_id)
+    }).done(showGraph);
 }
 
 function showGraph(jqXHR, textStatus) {
@@ -27,9 +36,12 @@ function showGraph(jqXHR, textStatus) {
         return;
     }
 
-    alert("done");
-    alert(jqXHR.response);
-
+    graph = {
+        "nodes": [{"name": pat_id, "group": 1}],
+        "links": []
+    }
+    parseGraph(graph, jqXHR.results, pat_id);
+    
     var force = d3.layout.force().charge(-120).linkDistance(30).size([width, height]);
 
     var nodeMap = {};
@@ -75,28 +87,41 @@ function showGraph(jqXHR, textStatus) {
             .attr("cy", function(d) { return d.y; });
     });
 
+    var link = svg.selectAll(".link")
+      .data(json.links)
+    .enter().append("line")
+      .attr("class", "link");
 
-    function getData() {
+  var node = svg.selectAll(".node")
+      .data(json.nodes)
+    .enter().append("g")
+      .attr("class", "node")
+      .call(force.drag);
 
-      return {
-      "nodes":[
-        {"name":"stkbl0001","group":1},
-        {"name":"stkbl0002","group":1},
-        {"name":"stkbl0003","group":1},
-        {"name":"stkbl0004","group":1},
-        {"name":"stkbl0005","group":1}
-      ],
-      "links":[
-        {"source":"stkbl0001","target":"stkbl0005","value":3},
-        {"source":"stkbl0002","target":"stkbl0005","value":3},
-        {"source":"stkbl0003","target":"stkbl0005","value":3},
-        {"source":"stkbl0004","target":"stkbl0005","value":3}
-      ] };    
-        
+  node.append("image")
+      .attr("xlink:href", "https://github.com/favicon.ico")
+      .attr("x", -8)
+      .attr("y", -8)
+      .attr("width", 16)
+      .attr("height", 16);
+
+  node.append("text")
+      .attr("dx", 12)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name });
+};
+
+function parseGraph(graph, json, child_pat_id) {
+    for(var pat_id in json) {
+        graph['nodes'].push({"name": pat_id, "group": 1})
+        graph['links'].push({"source": pat_id, "target": child_pat_id, "value": 3})
+        if("references" in json[pat_id]) {
+            parseGraph(graph, json[pat_id]["references"], pat_id);
+        }
     }
 };
 
 // from http://stackoverflow.com/questions/11582512/how-to-get-url-parameters-with-javascript/11582513#11582513
 function getURLParameter(name) {
   return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
-}
+};
