@@ -18,18 +18,18 @@ def key_word_search_result(keyWord, num_result=10):
 	htmltext = urllib2.urlopen(url).read()
 	soup = BeautifulSoup(htmltext)
 	raw_info = []
-	
+
 	for t in soup.findAll('tr'):
 		for tr in t.findAll('td', {'valign': "top"}):
 			raw_info += tr
-	# key: number from 1 to num_result
+
 	# value = (PAT NO, Discription)
-	dictionary = {}
+	dictionary = []
 	for i in range(num_result):
-		lable = int(str(raw_info[i*3].string).replace(",", ""))
 		number = int(str(raw_info[i*3+1].string).replace(",", ""))
-		div = str(raw_info[i*3 + 2].string).replace(",", "")[:-1]
-		dictionary[lable] = (number, div)
+		div = str(raw_info[i*3 + 2].string).replace(",", "").rstrip('\n').replace("\n", "")
+		" ".join(div.split())
+		dictionary += ((number, div),)
 	return dictionary
 
 
