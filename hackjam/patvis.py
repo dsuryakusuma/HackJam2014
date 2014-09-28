@@ -10,7 +10,13 @@ def index():
 
 @app.route('/keywordsearch/')
 def keywordsearch():
-    return render_template('keywordsearch.html')
+    query = request.args.get('query')
+    if query:
+        results = keyword_search(query)
+        results = [{'id': result[0], 'title': result[1]} for result in results]
+    else:
+        results = None
+    return render_template('keywordsearch.html', results=results)
 
 @app.route('/ajax/graph/', methods=['GET'])
 def ajax_graph():
