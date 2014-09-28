@@ -40,7 +40,8 @@ function showGraph(jqXHR, textStatus) {
         "nodes": [{"name": pat_id, "group": 1}],
         "links": []
     }
-    parseGraph(graph, jqXHR.results, pat_id);
+    nodes = {}
+    parseGraph(graph, nodes, jqXHR.results, pat_id);
     
     var force = d3.layout.force().charge(-120).linkDistance(30).size([width, height]);
 
@@ -74,8 +75,12 @@ function showGraph(jqXHR, textStatus) {
         .call(force.drag);
 
 
-    node.append("title")
-        .text(function(d) { return d.name; });
+      node.append("title")
+      .attr("dx", 12)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name });
+
+    node.on("click", function(e){ alert(nodes[e.name]) });
 
     force.on("tick", function() {
         link.attr("x1", function(d) { return d.source.x; })
@@ -86,37 +91,15 @@ function showGraph(jqXHR, textStatus) {
         node.attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
     });
-
-    var link = svg.selectAll(".link")
-      .data(json.links)
-    .enter().append("line")
-      .attr("class", "link");
-
-  var node = svg.selectAll(".node")
-      .data(json.nodes)
-    .enter().append("g")
-      .attr("class", "node")
-      .call(force.drag);
-
-  node.append("image")
-      .attr("xlink:href", "https://github.com/favicon.ico")
-      .attr("x", -8)
-      .attr("y", -8)
-      .attr("width", 16)
-      .attr("height", 16);
-
-  node.append("text")
-      .attr("dx", 12)
-      .attr("dy", ".35em")
-      .text(function(d) { return d.name });
 };
 
-function parseGraph(graph, json, child_pat_id) {
+function parseGraph(graph, nodes, json, child_pat_id) {
     for(var pat_id in json) {
+        nodes[pat_id] = json[pat_id]['title']
         graph['nodes'].push({"name": pat_id, "group": 1})
         graph['links'].push({"source": pat_id, "target": child_pat_id, "value": 3})
         if("references" in json[pat_id]) {
-            parseGraph(graph, json[pat_id]["references"], pat_id);
+            parseGraph(graph, nodes, json[pat_id]["references"], pat_id);
         }
     }
 };
