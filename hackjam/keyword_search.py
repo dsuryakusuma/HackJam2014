@@ -26,6 +26,7 @@ def key_word_search_result(keyWord, num_result=10):
 	# value = (PAT NO, Discription)
 	dictionary = []
 	for i in range(num_result):
+		print i
 		number = int(str(raw_info[i*3+1].string).replace(",", ""))
 		div = str(raw_info[i*3 + 2].string).replace(",", "").rstrip('\n').replace("\n", "")
 		" ".join(div.split())
