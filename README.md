@@ -1,5 +1,8 @@
-HackJam2014: Cal HackJam - August 27, 2014
+PatentAssist API
 =============
+
+HackJam2014: Cal HackJam - August 27, 2014
+
 
 We created PatentAssist API, which takes in a keyword and returns information on related patents.
 We built this with Python / the Django web framework, and JSON / JS on the web front end. 
