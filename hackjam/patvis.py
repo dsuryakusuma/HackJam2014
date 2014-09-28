@@ -12,15 +12,20 @@ def index():
 def keywordsearch():
     query = request.args.get('query')
     if query:
-        results = keyword_search(query)
-        results = [{'id': result[0], 'title': result[1]} for result in results]
+        results = keyword_search(query, 10)
+        results = [{'pat_id': result[0], 'title': result[1]} for result in results]
     else:
         results = None
     return render_template('keywordsearch.html', results=results)
 
+@app.route('/graph/')
+def graph():
+    pat_id = request.args.get('pat_id', type=str)
+    return render_template('graph.html', pat_id=pat_id)
+
 @app.route('/ajax/graph/', methods=['GET'])
 def ajax_graph():
-    pat_id = request.args.get('pat_id', type=int)
+    pat_id = request.args.get('pat_id', type=str)
     max_upstream = request.args.get('max_upstream', 3, type=int)
     
     results = {}

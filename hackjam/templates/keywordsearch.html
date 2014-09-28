@@ -4,10 +4,9 @@
     </head>
     <body>
         <ul>
-        {% for patent in patents %}
-            <li>{{ patent.id }}: {{patent.title}}</li>
+        {% for result in results %}
+            <li>{{ result.pat_id }} <a href="{{ url_for('graph') }}?pat_id={{ result.pat_id }}">{{result.title}}</a></li>
         {% endfor %}
         </ul>
     </body>
 </html>
-
