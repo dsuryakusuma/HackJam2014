@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Keyword Search</title>
+    </head>
+    <body>
+        <ul>
+        {% for patent in patents %}
+            <li>{{ patent.id }}: {{patent.title}}</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>
+
